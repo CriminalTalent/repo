@@ -55,13 +55,13 @@
           <input id="amount" type="number" inputmode="decimal" placeholder="예: 10000" min="0" step="0.01" />
         </div>
         <div class="col">
-          <label for="mult">계수</label>
+          <label for="mult">배수</label>
           <select id="mult">
-            <option value="5">×5</option>
-            <option value="4">×4</option>
-            <option value="3">×3</option>
-            <option value="2">×2</option>
-            <option value="1">×1</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
             <option value="0">0</option>
             <option value="-1">-1</option>
             <option value="-2">-2</option>
@@ -96,8 +96,8 @@
       <div class="history" id="history"></div>
 
       <footer>
-        정의: 최종정산 = 배팅금액 × 계수 (단, ×0=본전, ×1=+원금)<br/>
-        사용법: 이름(선택) → 금액 → 계수 → <span class="kbd">정산하기</span>
+        정의: 최종정산 = 배팅금액 × 배수 <br/>
+        사용법: 이름(선택) → 금액 → 배수 → <span class="kbd">정산하기</span>
       </footer>
     </div>
   </div>
@@ -141,11 +141,11 @@
       finalVal.className='val mono '+(profit>0?'pos':(profit<0?'neg':'muted'));
       profitVal.className='val mono '+(profit>0?'pos':(profit<0?'neg':'muted'));
 
-      let msg=`이번 판 결과${name?` - ${name}`:''}\n- 투자: ${fmt.format(amount)}갈레온\n`;
+      let msg=`이번 판 결과${name?` - ${name}`:''}\n- 기본금: ${fmt.format(amount)}갈레온\n`;
       if(m===0){
-        msg+=`- 결과: 본전 (0)`;
+        msg+=`- 결과:`;
       } else if(m===1){
-        msg+=`- 이익: ${fmt.format(profit)}갈레온 (투자금 회수)`;
+        msg+=`- 이익: ${fmt.format(profit)}갈레온 `;
       } else if(profit>0){
         msg+=`- 이익: ${fmt.format(profit)}갈레온`;
       } else if(profit<0){
@@ -163,7 +163,7 @@
 
     function lineOf(r){
       const n=r.name?`[${r.name}] `:''; 
-      return `${n}금액 ${fmt.format(r.amount)} × 계수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)} (${formatDate(r.ts)})`;
+      return `${n}금액 ${fmt.format(r.amount)} × 배수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)} (${formatDate(r.ts)})`;
     }
 
     function renderHistory(){
@@ -188,7 +188,25 @@
     calcBtn.addEventListener('click',()=>{const r=calc();if(r&&navigator.vibrate)navigator.vibrate(12)});
     resetBtn.addEventListener('click',reset);
     [amountEl,charEl].forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter')calc()}));
-    copyBtn.addEventListener('click',async()=>{const r=calc();if(!r)return;const text=lineOf(r);try{await navigator.clipboard.writeText(text);copyBtn.textContent='복사됨';setTimeout(()=>copyBtn.textContent='결과 복사',900)}catch(e){alert(text)}});
+
+    // ⬇⬇⬇ 여기 수정: "결과 복사" 버튼이 고정 멘트 형식으로 복사합니다
+    copyBtn.addEventListener('click',async()=>{
+      const r=calc(); if(!r) return;
+      const nameText = r.name || "";
+      const fixedText =
+`✵ 두근두근... 과연 점수는?
+[${nameText}] 금액 ${fmt.format(r.amount)} × 배수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)}`;
+      try{
+        await navigator.clipboard.writeText(fixedText);
+        copyBtn.textContent='복사됨';
+        setTimeout(()=>copyBtn.textContent='결과 복사',900);
+      }catch(e){
+        // 클립보드 권한이 없을 때 대비
+        alert(fixedText);
+      }
+    });
+    // ⬆⬆⬆ 여기까지 수정
+
     saveBtn.addEventListener('click',()=>{const r=calc();if(!r)return;saveHistoryItem(r);renderHistory();saveBtn.textContent='저장됨';setTimeout(()=>saveBtn.textContent='히스토리에 저장',900)});
     clearHistBtn.addEventListener('click',clearHistory);
     renderHistory();
