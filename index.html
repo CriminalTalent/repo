@@ -11,9 +11,7 @@
       --danger:#b14b4b; --success:#3a8e5a;
       --radius:14px; --radius-sm:10px; --shadow:0 10px 24px rgba(0,0,0,.35);
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-      background:linear-gradient(180deg,#0c1116,#0f1419 30%,#0f1419);color:var(--ink)}
+    body{margin:0;font-family:system-ui,"Noto Sans KR",sans-serif;background:#0f1419;color:var(--ink)}
     .wrap{max-width:720px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom))}
     .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
     .title{font-weight:700;font-size:20px;margin:0 0 12px;color:var(--accent-2)}
@@ -50,7 +48,7 @@
       <div class="row">
         <div class="col">
           <label for="char">캐릭터 이름 (선택)</label>
-          <input id="char" type="text" placeholder="예:휘페리온" maxlength="40" />
+          <input id="char" type="text" placeholder="예: 휘페리온" maxlength="40" />
         </div>
         <div class="col">
           <label for="amount">배팅 금액</label>
@@ -59,9 +57,9 @@
         <div class="col">
           <label for="mult">계수</label>
           <select id="mult">
-            <option value="5">5</option><option value="4">4</option>
-            <option value="3">3</option><option value="2">2</option>
-            <option value="1" selected>1</option><option value="0">0</option>
+            <option value="5">×5</option><option value="4">×4</option>
+            <option value="3">×3</option><option value="2">×2</option>
+            <option value="1" selected>×1</option><option value="0">0</option>
             <option value="-1">-1</option><option value="-2">-2</option>
             <option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option>
           </select>
@@ -76,6 +74,11 @@
       <div class="grid two">
         <div class="result"><h3>최종정산</h3><div id="finalVal" class="val mono muted">—</div></div>
         <div class="result"><h3>순이익</h3><div id="profitVal" class="val mono muted">—</div></div>
+      </div>
+
+      <div class="result" style="margin-top:12px">
+        <h3>안내 메시지</h3>
+        <pre id="message" class="mono muted" style="white-space:pre-wrap;margin:0">—</pre>
       </div>
 
       <div class="toolbar">
@@ -97,7 +100,7 @@
     const $=s=>document.querySelector(s);
     const charEl=$('#char'),amountEl=$('#amount'),multEl=$('#mult');
     const calcBtn=$('#calc'),resetBtn=$('#reset');
-    const finalVal=$('#finalVal'),profitVal=$('#profitVal');
+    const finalVal=$('#finalVal'),profitVal=$('#profitVal'),messageBox=$('#message');
     const copyBtn=$('#copyLine'),saveBtn=$('#save'),clearHistBtn=$('#clearHist'),historyBox=$('#history');
     const fmt=new Intl.NumberFormat('ko-KR',{maximumFractionDigits:2});
 
@@ -112,30 +115,36 @@
       const m=Number(multEl.value);
       if(!Number.isFinite(amount)||amount<0){
         finalVal.textContent='금액을 확인하세요';
-        finalVal.className='val mono neg';profitVal.textContent='—';profitVal.className='val mono muted';return null;
+        finalVal.className='val mono neg';profitVal.textContent='—';profitVal.className='val mono muted';
+        messageBox.textContent='금액을 확인하세요.';return null;
       }
       const final=amount*m,profit=final-amount;
       finalVal.textContent=fmt.format(final);
       profitVal.textContent=fmt.format(profit);
       finalVal.className='val mono '+(final>=amount?'pos':(m===1?'muted':'neg'));
       profitVal.className='val mono '+(profit>0?'pos':(profit<0?'neg':'muted'));
+      // 안내 메시지
+      let msg=`이번 판 결과${name?` - ${name}`:''}\n- 투자: ${fmt.format(amount)}갈레온\n`;
+      if(profit>0) msg+=`- 이익: ${fmt.format(profit)}갈레온`;
+      else if(profit<0) msg+=`- 손실: ${fmt.format(Math.abs(profit))}갈레온`;
+      else msg+=`- 결과: 본전 (0)`;
+      messageBox.textContent=msg;
       return {name,amount,m,final,profit,ts:Date.now()};
     }
     function reset(){charEl.value='';amountEl.value='';multEl.value='1';
-      finalVal.textContent='—';finalVal.className='val mono muted';profitVal.textContent='—';profitVal.className='val mono muted';}
+      finalVal.textContent='—';finalVal.className='val mono muted';profitVal.textContent='—';profitVal.className='val mono muted';messageBox.textContent='—';}
     function lineOf(r){const n=r.name?`[${r.name}] `:'';return `${n}금액 ${fmt.format(r.amount)} × 계수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)} (${formatDate(r.ts)})`}
     function renderHistory(){
       const list=loadHistory();historyBox.innerHTML='';
       if(!list.length){historyBox.innerHTML='<div class="history-item"><span class="muted">저장된 내역이 없습니다</span></div>';return;}
       list.slice().reverse().forEach(r=>{
         const row=document.createElement('div');row.className='history-item';
-        const left=document.createElement('div');
         const nameTag=r.name?`<span class="name-badge">${escapeHtml(r.name)}</span>`:''; 
         const cls=r.profit>0?'pos':(r.profit<0?'neg':'muted');
-        left.innerHTML=`${nameTag}<span class="mono">${fmt.format(r.amount)}</span> × <span class="mono">${r.m}</span> 
+        row.innerHTML=`${nameTag}<span class="mono">${fmt.format(r.amount)}</span> × <span class="mono">${r.m}</span> 
                         <span class="mono ${cls}">${fmt.format(r.profit)}</span>
                         <div class="time">${formatDate(r.ts||Date.now())}</div>`;
-        row.appendChild(left);historyBox.appendChild(row);
+        historyBox.appendChild(row);
       });
     }
     function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
