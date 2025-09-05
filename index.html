@@ -57,11 +57,17 @@
         <div class="col">
           <label for="mult">계수</label>
           <select id="mult">
-            <option value="5">×5</option><option value="4">×4</option>
-            <option value="3">×3</option><option value="2">×2</option>
-            <option value="1" selected>×1</option><option value="0">0</option>
-            <option value="-1">-1</option><option value="-2">-2</option>
-            <option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option>
+            <option value="5">×5</option>
+            <option value="4">×4</option>
+            <option value="3">×3</option>
+            <option value="2">×2</option>
+            <option value="1">×1</option>
+            <option value="0">0</option>
+            <option value="-1">-1</option>
+            <option value="-2">-2</option>
+            <option value="-3">-3</option>
+            <option value="-4">-4</option>
+            <option value="-5">-5</option>
           </select>
         </div>
       </div>
@@ -90,7 +96,7 @@
       <div class="history" id="history"></div>
 
       <footer>
-        정의: 최종정산 = 배팅금액 × 계수, 순이익 = 최종정산 − 배팅금액<br/>
+        정의: 최종정산 = 배팅금액 × 계수 (단, ×0=본전, ×1=+원금)<br/>
         사용법: 이름(선택) → 금액 → 계수 → <span class="kbd">정산하기</span>
       </footer>
     </div>
@@ -109,31 +115,57 @@
       const d=new Date(ts);
       return d.toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
     }
+
     function calc(){
       const name=(charEl.value||'').trim();
       const amount=parseAmount(amountEl.value);
       const m=Number(multEl.value);
+
       if(!Number.isFinite(amount)||amount<0){
         finalVal.textContent='금액을 확인하세요';
         finalVal.className='val mono neg';profitVal.textContent='—';profitVal.className='val mono muted';
         messageBox.textContent='금액을 확인하세요.';return null;
       }
-      const final=amount*m,profit=final-amount;
+
+      let final, profit;
+      if(m===0){ // 본전
+        final=0; profit=0;
+      } else if(m===1){ // 건 만큼 이익
+        final=amount; profit=amount;
+      } else {
+        final=amount*m; profit=final-amount;
+      }
+
       finalVal.textContent=fmt.format(final);
       profitVal.textContent=fmt.format(profit);
-      finalVal.className='val mono '+(final>=amount?'pos':(m===1?'muted':'neg'));
+      finalVal.className='val mono '+(profit>0?'pos':(profit<0?'neg':'muted'));
       profitVal.className='val mono '+(profit>0?'pos':(profit<0?'neg':'muted'));
-      // 안내 메시지
+
       let msg=`이번 판 결과${name?` - ${name}`:''}\n- 투자: ${fmt.format(amount)}갈레온\n`;
-      if(profit>0) msg+=`- 이익: ${fmt.format(profit)}갈레온`;
-      else if(profit<0) msg+=`- 손실: ${fmt.format(Math.abs(profit))}갈레온`;
-      else msg+=`- 결과: 본전 (0)`;
+      if(m===0){
+        msg+=`- 결과: 본전 (0)`;
+      } else if(m===1){
+        msg+=`- 이익: ${fmt.format(profit)}갈레온 (투자금 회수)`;
+      } else if(profit>0){
+        msg+=`- 이익: ${fmt.format(profit)}갈레온`;
+      } else if(profit<0){
+        msg+=`- 손실: ${fmt.format(Math.abs(profit))}갈레온`;
+      }
       messageBox.textContent=msg;
+
       return {name,amount,m,final,profit,ts:Date.now()};
     }
-    function reset(){charEl.value='';amountEl.value='';multEl.value='1';
-      finalVal.textContent='—';finalVal.className='val mono muted';profitVal.textContent='—';profitVal.className='val mono muted';messageBox.textContent='—';}
-    function lineOf(r){const n=r.name?`[${r.name}] `:'';return `${n}금액 ${fmt.format(r.amount)} × 계수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)} (${formatDate(r.ts)})`}
+
+    function reset(){
+      charEl.value='';amountEl.value='';multEl.value='1';
+      finalVal.textContent='—';finalVal.className='val mono muted';profitVal.textContent='—';profitVal.className='val mono muted';messageBox.textContent='—';
+    }
+
+    function lineOf(r){
+      const n=r.name?`[${r.name}] `:''; 
+      return `${n}금액 ${fmt.format(r.amount)} × 계수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)} (${formatDate(r.ts)})`;
+    }
+
     function renderHistory(){
       const list=loadHistory();historyBox.innerHTML='';
       if(!list.length){historyBox.innerHTML='<div class="history-item"><span class="muted">저장된 내역이 없습니다</span></div>';return;}
@@ -147,6 +179,7 @@
         historyBox.appendChild(row);
       });
     }
+
     function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
     function loadHistory(){try{const raw=localStorage.getItem('ud_hist');return raw?JSON.parse(raw):[]}catch(e){return[]}}
     function saveHistoryItem(item){const list=loadHistory();list.push(item);try{localStorage.setItem('ud_hist',JSON.stringify(list))}catch(e){}}
