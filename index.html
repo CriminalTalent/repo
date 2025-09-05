@@ -6,56 +6,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <style>
     :root{
-      --bg:#0f1419;
-      --panel:#171c22;
-      --ink:#f1e9d2;
-      --ink-dim:#bfb69d;
-      --accent:#d4ba8d;
-      --accent-2:#dcc7a2;
-      --line:#2a313a;
-      --danger:#b14b4b;
-      --success:#3a8e5a;
-      --radius:14px;
-      --radius-sm:10px;
-      --shadow:0 10px 24px rgba(0,0,0,.35);
+      --bg:#0f1419; --panel:#171c22; --ink:#f1e9d2; --ink-dim:#bfb69d;
+      --accent:#d4ba8d; --accent-2:#dcc7a2; --line:#2a313a;
+      --danger:#b14b4b; --success:#3a8e5a;
+      --radius:14px; --radius-sm:10px; --shadow:0 10px 24px rgba(0,0,0,.35);
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-      background:linear-gradient(180deg,#0c1116,#0f1419 30%,#0f1419);
-      color:var(--ink);
-    }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      background:linear-gradient(180deg,#0c1116,#0f1419 30%,#0f1419);color:var(--ink)}
     .wrap{max-width:720px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom))}
     .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
-    .title{font-weight:700;font-size:20px;letter-spacing:.2px;margin:0 0 12px;color:var(--accent-2)}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    .col{flex:1 1 220px}
+    .title{font-weight:700;font-size:20px;margin:0 0 12px;color:var(--accent-2)}
+    .row{display:flex;gap:12px;flex-wrap:wrap}.col{flex:1 1 220px}
     label{display:block;font-size:13px;color:var(--ink-dim);margin:0 0 6px}
-    input,select,button{
-      width:100%;padding:14px 12px;border-radius:var(--radius-sm);
-      border:1px solid var(--line);background:#0f1318;color:var(--ink);font-size:16px;outline:none;
-    }
+    input,select,button{width:100%;padding:14px 12px;border-radius:var(--radius-sm);border:1px solid var(--line);
+      background:#0f1318;color:var(--ink);font-size:16px}
     input:focus,select:focus{border-color:var(--accent)}
     .btn{background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#0a0d11;font-weight:700;border:none;cursor:pointer}
     .btn:active{transform:translateY(1px)}
     .ghost{background:#0f1318;color:var(--ink);border:1px solid var(--line)}
-    .grid{display:grid;gap:12px;margin-top:12px}
-    .grid.two{grid-template-columns:1fr 1fr}
-    @media (max-width:480px){.grid.two{grid-template-columns:1fr}}
+    .grid{display:grid;gap:12px;margin-top:12px}.grid.two{grid-template-columns:1fr 1fr}
+    @media(max-width:480px){.grid.two{grid-template-columns:1fr}}
     .result{background:#0f1318;border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px}
     .result h3{margin:0 0 6px;font-size:14px;color:var(--ink-dim);font-weight:600}
-    .result .val{font-size:22px;font-weight:800;letter-spacing:.2px}
-    .pos{color:var(--success)} .neg{color:var(--danger)} .muted{color:var(--ink-dim)}
+    .result .val{font-size:22px;font-weight:800}
+    .pos{color:var(--success)}.neg{color:var(--danger)}.muted{color:var(--ink-dim)}
     .toolbar{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
     .history{margin-top:18px}
-    .history-item{display:flex;justify-content:space-between;gap:12px;padding:12px;border-bottom:1px dashed var(--line);font-size:14px}
+    .history-item{padding:12px;border-bottom:1px dashed var(--line);font-size:14px}
     .history-item:last-child{border-bottom:none}
     .mono{font-variant-numeric:tabular-nums}
+    .name-badge{display:inline-block;padding:2px 8px;border:1px solid var(--line);border-radius:999px;margin-right:6px;background:#0f1318;color:var(--ink-dim);font-size:12px}
+    .time{display:block;font-size:12px;color:var(--ink-dim);margin-top:4px}
     footer{margin-top:18px;color:var(--ink-dim);font-size:12px;text-align:center}
     .kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:8px;padding:2px 6px;background:#0f1318}
-    .name-badge{display:inline-block;padding:2px 8px;border:1px solid var(--line);border-radius:999px;margin-right:8px;background:#0f1318;color:var(--ink-dim);font-size:12px}
   </style>
 </head>
 <body>
@@ -74,18 +58,12 @@
         </div>
         <div class="col">
           <label for="mult">계수</label>
-          <select id="mult" aria-label="계수 선택">
-            <option value="5">×5</option>
-            <option value="4">×4</option>
-            <option value="3">×3</option>
-            <option value="2">×2</option>
-            <option value="1" selected>×1</option>
-            <option value="0">0</option>
-            <option value="-1">-1</option>
-            <option value="-2">-2</option>
-            <option value="-3">-3</option>
-            <option value="-4">-4</option>
-            <option value="-5">-5</option>
+          <select id="mult">
+            <option value="5">×5</option><option value="4">×4</option>
+            <option value="3">×3</option><option value="2">×2</option>
+            <option value="1" selected>×1</option><option value="0">0</option>
+            <option value="-1">-1</option><option value="-2">-2</option>
+            <option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option>
           </select>
         </div>
       </div>
@@ -96,14 +74,8 @@
       </div>
 
       <div class="grid two">
-        <div class="result">
-          <h3>최종정산</h3>
-          <div id="finalVal" class="val mono muted">—</div>
-        </div>
-        <div class="result">
-          <h3>순이익</h3>
-          <div id="profitVal" class="val mono muted">—</div>
-        </div>
+        <div class="result"><h3>최종정산</h3><div id="finalVal" class="val mono muted">—</div></div>
+        <div class="result"><h3>순이익</h3><div id="profitVal" class="val mono muted">—</div></div>
       </div>
 
       <div class="toolbar">
@@ -116,155 +88,67 @@
 
       <footer>
         정의: 최종정산 = 배팅금액 × 계수, 순이익 = 최종정산 − 배팅금액<br/>
-        빠른 사용: 이름(선택) → 금액 → 계수 → <span class="kbd">정산하기</span>
+        사용법: 이름(선택) → 금액 → 계수 → <span class="kbd">정산하기</span>
       </footer>
     </div>
   </div>
 
   <script>
-    const $ = s => document.querySelector(s);
-    const charEl = $('#char');
-    const amountEl = $('#amount');
-    const multEl = $('#mult');
-    const calcBtn = $('#calc');
-    const resetBtn = $('#reset');
-    const finalVal = $('#finalVal');
-    const profitVal = $('#profitVal');
-    const copyBtn = $('#copyLine');
-    const saveBtn = $('#save');
-    const clearHistBtn = $('#clearHist');
-    const historyBox = $('#history');
+    const $=s=>document.querySelector(s);
+    const charEl=$('#char'),amountEl=$('#amount'),multEl=$('#mult');
+    const calcBtn=$('#calc'),resetBtn=$('#reset');
+    const finalVal=$('#finalVal'),profitVal=$('#profitVal');
+    const copyBtn=$('#copyLine'),saveBtn=$('#save'),clearHistBtn=$('#clearHist'),historyBox=$('#history');
+    const fmt=new Intl.NumberFormat('ko-KR',{maximumFractionDigits:2});
 
-    const fmt = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 2 });
-
-    function parseAmount(v){
-      const n = Number(String(v).replace(/,/g,'').trim());
-      return Number.isFinite(n) ? n : NaN;
+    function parseAmount(v){const n=Number(String(v).replace(/,/g,'').trim());return Number.isFinite(n)?n:NaN}
+    function formatDate(ts){
+      const d=new Date(ts);
+      return d.toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
     }
-
     function calc(){
-      const name = (charEl.value || '').trim();
-      const amount = parseAmount(amountEl.value);
-      const m = Number(multEl.value);
-
-      if (!Number.isFinite(amount) || amount < 0){
-        finalVal.textContent = '금액을 확인하세요';
-        finalVal.className = 'val mono neg';
-        profitVal.textContent = '—';
-        profitVal.className = 'val mono muted';
-        return null;
+      const name=(charEl.value||'').trim();
+      const amount=parseAmount(amountEl.value);
+      const m=Number(multEl.value);
+      if(!Number.isFinite(amount)||amount<0){
+        finalVal.textContent='금액을 확인하세요';
+        finalVal.className='val mono neg';profitVal.textContent='—';profitVal.className='val mono muted';return null;
       }
-      const final = amount * m;
-      const profit = final - amount;
-
-      finalVal.textContent = fmt.format(final);
-      profitVal.textContent = fmt.format(profit);
-
-      finalVal.className = 'val mono ' + (final >= amount ? 'pos' : (m===1?'muted':'neg'));
-      profitVal.className = 'val mono ' + (profit > 0 ? 'pos' : (profit < 0 ? 'neg' : 'muted'));
-
-      return { name, amount, m, final, profit, ts: Date.now() };
+      const final=amount*m,profit=final-amount;
+      finalVal.textContent=fmt.format(final);
+      profitVal.textContent=fmt.format(profit);
+      finalVal.className='val mono '+(final>=amount?'pos':(m===1?'muted':'neg'));
+      profitVal.className='val mono '+(profit>0?'pos':(profit<0?'neg':'muted'));
+      return {name,amount,m,final,profit,ts:Date.now()};
     }
-
-    function reset(){
-      charEl.value = '';
-      amountEl.value = '';
-      multEl.value = '1';
-      finalVal.textContent = '—';
-      finalVal.className = 'val mono muted';
-      profitVal.textContent = '—';
-      profitVal.className = 'val mono muted';
-    }
-
-    function lineOf(r){
-      const n = r.name ? `[${r.name}] ` : '';
-      return `${n}금액 ${fmt.format(r.amount)} × 계수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)}`;
-    }
-
+    function reset(){charEl.value='';amountEl.value='';multEl.value='1';
+      finalVal.textContent='—';finalVal.className='val mono muted';profitVal.textContent='—';profitVal.className='val mono muted';}
+    function lineOf(r){const n=r.name?`[${r.name}] `:'';return `${n}금액 ${fmt.format(r.amount)} × 계수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)} (${formatDate(r.ts)})`}
     function renderHistory(){
-      const list = loadHistory();
-      historyBox.innerHTML = '';
-      if (!list.length){
-        const empty = document.createElement('div');
-        empty.className = 'history-item';
-        empty.innerHTML = '<span class="muted">저장된 내역이 없습니다</span><span></span>';
-        historyBox.appendChild(empty);
-        return;
-      }
+      const list=loadHistory();historyBox.innerHTML='';
+      if(!list.length){historyBox.innerHTML='<div class="history-item"><span class="muted">저장된 내역이 없습니다</span></div>';return;}
       list.slice().reverse().forEach(r=>{
-        const row = document.createElement('div');
-        row.className = 'history-item';
-        const left = document.createElement('div');
-
-        // 과거 데이터 호환: name이 없을 수 있음
-        const nameTag = r.name ? `<span class="name-badge">${escapeHtml(r.name)}</span>` : '';
-        left.innerHTML = `${nameTag}<span class="mono">${fmt.format(r.amount)}</span> × <span class="mono">${r.m}</span>`;
-
-        const right = document.createElement('div');
-        const cls = r.profit > 0 ? 'pos' : (r.profit < 0 ? 'neg' : 'muted');
-        right.innerHTML = `<span class="mono ${cls}">${fmt.format(r.profit)}</span>`;
-        row.appendChild(left);
-        row.appendChild(right);
-        historyBox.appendChild(row);
+        const row=document.createElement('div');row.className='history-item';
+        const left=document.createElement('div');
+        const nameTag=r.name?`<span class="name-badge">${escapeHtml(r.name)}</span>`:''; 
+        const cls=r.profit>0?'pos':(r.profit<0?'neg':'muted');
+        left.innerHTML=`${nameTag}<span class="mono">${fmt.format(r.amount)}</span> × <span class="mono">${r.m}</span> 
+                        <span class="mono ${cls}">${fmt.format(r.profit)}</span>
+                        <div class="time">${formatDate(r.ts||Date.now())}</div>`;
+        row.appendChild(left);historyBox.appendChild(row);
       });
     }
+    function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+    function loadHistory(){try{const raw=localStorage.getItem('ud_hist');return raw?JSON.parse(raw):[]}catch(e){return[]}}
+    function saveHistoryItem(item){const list=loadHistory();list.push(item);try{localStorage.setItem('ud_hist',JSON.stringify(list))}catch(e){}}
+    function clearHistory(){try{localStorage.removeItem('ud_hist')}catch(e){}renderHistory()}
 
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, m =>
-        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])
-      );
-    }
-
-    function loadHistory(){
-      try{
-        const raw = localStorage.getItem('ud_hist');
-        return raw ? JSON.parse(raw) : [];
-      }catch(e){ return []; }
-    }
-    function saveHistoryItem(item){
-      const list = loadHistory();
-      list.push(item);
-      try{
-        localStorage.setItem('ud_hist', JSON.stringify(list));
-      }catch(e){}
-    }
-    function clearHistory(){
-      try{ localStorage.removeItem('ud_hist'); }catch(e){}
-      renderHistory();
-    }
-
-    // 이벤트
-    calcBtn.addEventListener('click', () => {
-      const r = calc();
-      if (r && navigator.vibrate) navigator.vibrate(12);
-    });
-    resetBtn.addEventListener('click', reset);
-    amountEl.addEventListener('keydown', e=>{ if (e.key === 'Enter') calc(); });
-    charEl.addEventListener('keydown', e=>{ if (e.key === 'Enter') calc(); });
-
-    copyBtn.addEventListener('click', async ()=>{
-      const r = calc();
-      if (!r) return;
-      const text = lineOf(r);
-      try{
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = '복사됨';
-        setTimeout(()=>copyBtn.textContent='결과 복사', 900);
-      }catch(e){ alert(text); }
-    });
-
-    saveBtn.addEventListener('click', ()=>{
-      const r = calc();
-      if (!r) return;
-      saveHistoryItem(r);
-      renderHistory();
-      saveBtn.textContent = '저장됨';
-      setTimeout(()=>saveBtn.textContent='히스토리에 저장', 900);
-    });
-
-    clearHistBtn.addEventListener('click', clearHistory);
-
-    // 최초 렌더
+    calcBtn.addEventListener('click',()=>{const r=calc();if(r&&navigator.vibrate)navigator.vibrate(12)});
+    resetBtn.addEventListener('click',reset);
+    [amountEl,charEl].forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter')calc()}));
+    copyBtn.addEventListener('click',async()=>{const r=calc();if(!r)return;const text=lineOf(r);try{await navigator.clipboard.writeText(text);copyBtn.textContent='복사됨';setTimeout(()=>copyBtn.textContent='결과 복사',900)}catch(e){alert(text)}});
+    saveBtn.addEventListener('click',()=>{const r=calc();if(!r)return;saveHistoryItem(r);renderHistory();saveBtn.textContent='저장됨';setTimeout(()=>saveBtn.textContent='히스토리에 저장',900)});
+    clearHistBtn.addEventListener('click',clearHistory);
     renderHistory();
   </script>
 </body>
