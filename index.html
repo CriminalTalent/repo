@@ -579,7 +579,7 @@
       <div class="row">
         <div class="col">
           <label for="char">캐릭터 이름</label>
-          <input id="char" type="text" placeholder="예: 휘페리온" maxlength="40" />
+          <input id="char" type="text" placeholder="예: 홍길동" maxlength="40" />
         </div>
         <div class="col">
           <label for="amount">배팅 금액</label>
@@ -693,7 +693,7 @@
 
       <div class="setting-group">
         <label for="fixedMessageInput">고정 대사 (복사 시 앞부분)</label>
-        <textarea id="fixedMessageInput" placeholder="예: ✵ 두근두근... 과연 점수는?"></textarea>
+        <textarea id="fixedMessageInput" placeholder="예: 두근두근... 과연 점수는?"></textarea>
         <div class="hint">결과 복사 시 앞에 붙을 고정 문구를 입력하세요</div>
       </div>
 
@@ -919,7 +919,7 @@
       if (!r) return;
       
       const nameText = r.name || "";
-      const fixedMsg = localStorage.getItem('ud_fixed_message') || '✵ 두근두근... 과연 점수는?';
+      const fixedMsg = localStorage.getItem('ud_fixed_message') || '두근두근... 과연 점수는?';
       const fixedText = `${fixedMsg}\n[${nameText}] 금액 ${fmt.format(r.amount)} × 배수 ${r.m} = 최종 ${fmt.format(r.final)} / 순이익 ${fmt.format(r.profit)}`;
       
       try {
